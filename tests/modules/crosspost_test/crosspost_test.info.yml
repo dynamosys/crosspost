@@ -1,0 +1,6 @@
+name: Crosspost test
+type: module
+description: 'Adapters that post nowhere, for Crosspost tests.'
+package: Testing
+dependencies:
+  - crosspost:crosspost

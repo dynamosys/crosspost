@@ -1,0 +1,14 @@
+# ddev-drupal-contrib working files
+/.ddev/
+/vendor/
+/web/
+/composer.lock
+/composer.contrib.json
+/composer.contrib.lock
+.phpunit.result.cache
+.DS_Store
+/.editorconfig
+/.gitattributes/recipes/
+/phpcs.xml.dist
+/phpstan.neon
+/phpstan-baseline.neon

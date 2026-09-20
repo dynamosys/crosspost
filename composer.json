@@ -1,0 +1,16 @@
+{
+    "name": "drupal/crosspost",
+    "description": "Shares Drupal content to social platforms once its public address answers, and keeps a record per post and platform.",
+    "type": "drupal-module",
+    "license": "GPL-2.0-or-later",
+    "homepage": "https://www.drupal.org/project/crosspost",
+    "keywords": ["Drupal", "social", "crosspost", "share", "static"],
+    "support": {
+        "issues": "https://www.drupal.org/project/issues/crosspost",
+        "source": "https://git.drupalcode.org/project/crosspost"
+    },
+    "require": {
+        "php": ">=8.1",
+        "drupal/core": "^10.3 || ^11"
+    }
+}

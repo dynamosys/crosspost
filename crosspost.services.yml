@@ -1,0 +1,4 @@
+services:
+  plugin.manager.crosspost_adapter:
+    class: Drupal\crosspost\Adapter\AdapterPluginManager
+    parent: default_plugin_manager
