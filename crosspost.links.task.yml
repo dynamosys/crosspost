@@ -1,0 +1,20 @@
+crosspost.connections:
+  title: 'Connections'
+  route_name: crosspost.connections
+  base_route: crosspost.connections
+  weight: 0
+crosspost.settings:
+  title: 'Settings'
+  route_name: crosspost.settings
+  base_route: crosspost.connections
+  weight: 10
+crosspost.log:
+  title: 'Log'
+  route_name: crosspost.log
+  base_route: crosspost.connections
+  weight: 20
+crosspost.share:
+  title: 'Share'
+  route_name: crosspost.share
+  base_route: entity.node.canonical
+  weight: 15

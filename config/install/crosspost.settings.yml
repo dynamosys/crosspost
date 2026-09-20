@@ -1,0 +1,5 @@
+base_url: ''
+check_every: 15
+check_for: 24
+retries: 3
+types: {}

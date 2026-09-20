@@ -13,7 +13,7 @@ final class Message {
    * Constructs a Message.
    *
    * @param string $text
-   *   The words, without the link.
+   *   The words, hashtags included, without the link.
    * @param string $url
    *   The page's public address.
    * @param string $title
@@ -22,8 +22,6 @@ final class Message {
    *   The page's description, for the same.
    * @param string|null $image
    *   The address of the page's share picture, if it has one.
-   * @param string[] $tags
-   *   Hashtags, without the sign.
    */
   public function __construct(
     public readonly string $text,
@@ -31,7 +29,6 @@ final class Message {
     public readonly string $title = '',
     public readonly string $summary = '',
     public readonly ?string $image = NULL,
-    public readonly array $tags = [],
   ) {}
 
 }

@@ -1,0 +1,29 @@
+{#
+/**
+ * @file
+ * A platform's setup guide: the same four facts for every platform, then the
+ * steps.
+ *
+ * Available variables:
+ * - platform: The platform's name.
+ * - guide: The \Drupal\crosspost\Adapter\Guide object.
+ * - checked: The date the guide was last checked, formatted.
+ */
+#}
+<div class="crosspost-guide__body">
+  <h3 class="crosspost-guide__title">{{ 'Set up @platform'|t({'@platform': platform}) }}</h3>
+  <dl class="crosspost-facts">
+    <div class="crosspost-fact"><dt>{{ 'What you create'|t }}</dt><dd>{{ guide.create }}</dd></div>
+    <div class="crosspost-fact"><dt>{{ 'Review'|t }}</dt><dd>{{ guide.review }}</dd></div>
+    <div class="crosspost-fact"><dt>{{ 'Cost'|t }}</dt><dd>{{ guide.cost }}</dd></div>
+    <div class="crosspost-fact"><dt>{{ 'Limits'|t }}</dt><dd>{{ guide.limits }}</dd></div>
+  </dl>
+  <ol class="crosspost-steps">
+    {% for step in guide.steps %}
+      <li>{{ step }}</li>
+    {% endfor %}
+  </ol>
+  <p class="crosspost-help">
+    {{ 'Checked against <a href=":url">@platform\'s documentation</a> on @date. Platforms change their rules; theirs is the last word.'|t({':url': guide.documentation, '@platform': platform, '@date': checked}) }}
+  </p>
+</div>

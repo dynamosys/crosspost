@@ -2,3 +2,21 @@ services:
   plugin.manager.crosspost_adapter:
     class: Drupal\crosspost\Adapter\AdapterPluginManager
     parent: default_plugin_manager
+  crosspost.credentials:
+    class: Drupal\crosspost\Credentials
+    arguments: ['@key.repository']
+  crosspost.public_page:
+    class: Drupal\crosspost\PublicPage
+    arguments: ['@config.factory', '@http_client']
+  crosspost.hashtags:
+    class: Drupal\crosspost\Hashtags
+    arguments: ['@config.factory']
+  crosspost.sharer:
+    class: Drupal\crosspost\Sharer
+    arguments: ['@entity_type.manager', '@plugin.manager.crosspost_adapter', '@crosspost.credentials', '@crosspost.public_page', '@config.factory', '@lock', '@state', '@datetime.time', '@date.formatter', '@current_user']
+  crosspost.auto_share:
+    class: Drupal\crosspost\AutoShare
+    arguments: ['@config.factory', '@entity_type.manager', '@crosspost.sharer', '@crosspost.hashtags']
+  crosspost.log_builder:
+    class: Drupal\crosspost\LogBuilder
+    arguments: ['@entity_type.manager', '@date.formatter', '@redirect.destination']

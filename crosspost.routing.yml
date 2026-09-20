@@ -1,0 +1,66 @@
+crosspost.connections:
+  path: '/admin/config/services/crosspost'
+  defaults:
+    _controller: '\Drupal\crosspost\Controller\ConnectionsController::page'
+    _title: 'Crosspost'
+  requirements:
+    _permission: 'administer crosspost'
+
+crosspost.connection.test:
+  path: '/admin/config/services/crosspost/{crosspost_connection}/test'
+  defaults:
+    _controller: '\Drupal\crosspost\Controller\ConnectionsController::test'
+  requirements:
+    _permission: 'administer crosspost'
+    _csrf_token: 'TRUE'
+
+entity.crosspost_connection.delete_form:
+  path: '/admin/config/services/crosspost/{crosspost_connection}/disconnect'
+  defaults:
+    _entity_form: 'crosspost_connection.delete'
+    _title: 'Disconnect'
+  requirements:
+    _permission: 'administer crosspost'
+
+crosspost.settings:
+  path: '/admin/config/services/crosspost/settings'
+  defaults:
+    _form: '\Drupal\crosspost\Form\SettingsForm'
+    _title: 'Crosspost'
+  requirements:
+    _permission: 'administer crosspost'
+
+crosspost.log:
+  path: '/admin/config/services/crosspost/log'
+  defaults:
+    _controller: '\Drupal\crosspost\Controller\LogController::page'
+    _title: 'Crosspost'
+  requirements:
+    _permission: 'view crosspost log'
+
+crosspost.share:
+  path: '/node/{node}/share'
+  defaults:
+    _form: '\Drupal\crosspost\Form\ShareForm'
+    _title_callback: '\Drupal\crosspost\Controller\LogController::shareTitle'
+  requirements:
+    _custom_access: '\Drupal\crosspost\Access\ShareAccess::access'
+    node: \d+
+  options:
+    _node_operation_route: TRUE
+    parameters:
+      node:
+        type: 'entity:node'
+
+crosspost.announcement.act:
+  path: '/crosspost/announcement/{crosspost_announcement}/{operation}'
+  defaults:
+    _controller: '\Drupal\crosspost\Controller\LogController::act'
+  requirements:
+    _custom_access: '\Drupal\crosspost\Access\ShareAccess::actAccess'
+    _csrf_token: 'TRUE'
+    operation: 'try|cancel'
+  options:
+    parameters:
+      crosspost_announcement:
+        type: 'entity:crosspost_announcement'

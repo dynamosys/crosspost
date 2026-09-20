@@ -1,0 +1,171 @@
+/**
+ * @file
+ * Crosspost's admin screens. Small screens first.
+ */
+
+.crosspost-pill {
+  display: inline-block;
+  padding: 0.1em 0.7em;
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.crosspost-pill--ok {
+  color: #0d5c2e;
+  background: #e3f6ea;
+}
+.crosspost-pill--off {
+  color: #45464f;
+  background: #ececf1;
+}
+.crosspost-pill--err {
+  color: #9b1c1c;
+  background: #fde8e8;
+}
+.crosspost-pill--wait {
+  color: #6b4a00;
+  background: #fff1d1;
+}
+.crosspost-scroll {
+  /* Positioned, so that visually hidden labels inside are clipped with it. */
+  position: relative;
+  overflow-x: auto;
+}
+.crosspost-scroll > table {
+  min-width: 40rem;
+}
+.crosspost-scroll th {
+  white-space: nowrap;
+}
+.crosspost-scroll table,
+.crosspost-guide {
+  hyphens: manual;
+}
+.crosspost-help {
+  margin: 0.3em 0 0;
+  color: #55565b;
+  font-size: 0.875rem;
+}
+.crosspost-add {
+  font-size: 0.8125rem;
+}
+tr.crosspost-open > td,
+tr.crosspost-guide-row > td {
+  background: #f7f9ff;
+}
+tr.crosspost-guide-row > td {
+  padding: 1rem 1.25rem 1.5rem;
+}
+.crosspost-guide__title {
+  margin: 0 0 0.75rem;
+  font-size: 1.125rem;
+}
+.crosspost-facts {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0 0 1rem;
+  grid-template-columns: 1fr;
+}
+.crosspost-fact {
+  padding: 0.6rem 0.8rem;
+  border: 1px solid #d3d4d9;
+  border-radius: 6px;
+  background: #fff;
+}
+.crosspost-fact dt {
+  margin: 0 0 0.15rem;
+  color: #55565b;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+.crosspost-fact dd {
+  margin: 0;
+}
+.crosspost-steps {
+  margin: 0 0 1rem;
+  padding-left: 1.3rem;
+}
+.crosspost-steps li {
+  margin: 0.35rem 0;
+}
+.crosspost-fields {
+  max-width: 40rem;
+}
+.crosspost-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  align-items: center;
+  margin-top: 1rem;
+}
+.crosspost-actions .button {
+  margin: 0;
+}
+.crosspost-grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: 1fr;
+}
+.crosspost-counts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0.5rem 0 0;
+}
+.crosspost-count {
+  padding: 0.1em 0.6em;
+  border: 1px solid #d3d4d9;
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+}
+.crosspost-count.is-over {
+  color: #9b1c1c;
+  border-color: #dc2d2d;
+  background: #fde8e8;
+}
+.crosspost-card {
+  max-width: 26rem;
+  overflow: hidden;
+  border: 1px solid #d3d4d9;
+  border-radius: 8px;
+}
+.crosspost-card img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.crosspost-card__text {
+  padding: 0.6rem 0.8rem;
+}
+.crosspost-card__text small {
+  display: block;
+  color: #55565b;
+}
+.crosspost-tries {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  align-items: center;
+  margin: 0 0 0.7rem;
+}
+.crosspost-tries .form-item {
+  margin: 0;
+}
+.crosspost-tries input {
+  width: 4.5rem;
+}
+.crosspost-reply {
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  font-size: 0.8125rem;
+  overflow-wrap: anywhere;
+}
+@media (min-width: 48em) {
+  .crosspost-facts {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .crosspost-grid {
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  }
+}

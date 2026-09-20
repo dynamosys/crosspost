@@ -1,0 +1,98 @@
+<?php
+
+/**
+ * @file
+ * Shares content to social platforms once its public address answers.
+ */
+
+declare(strict_types=1);
+
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\crosspost\Entity\AnnouncementInterface;
+use Drupal\crosspost\Entity\ConnectionInterface;
+use Drupal\node\NodeInterface;
+
+/**
+ * Implements hook_help().
+ */
+function crosspost_help($route_name, RouteMatchInterface $route_match) {
+  if ($route_name === 'help.page.crosspost') {
+    $output = '<h2>' . t('About') . '</h2>';
+    $output .= '<p>' . t('Crosspost shares content to social platforms. It shares a page only once its public address answers, and it keeps a record for every page and account, so nothing goes out twice and nothing links to a page that is not there yet.') . '</p>';
+    $output .= '<p>' . t("It is middleware between your site and the platforms. Which platforms to connect, and whether to pay for one that charges, is your decision. Each platform comes with a setup guide. A refusal is shown in the platform's own words and is not worked around.") . '</p>';
+    $output .= '<h2>' . t('Uses') . '</h2><dl>';
+    $output .= '<dt>' . t('Connecting accounts') . '</dt><dd>' . t('On the <a href=":url">Connections</a> page, open a platform\'s guide, follow its steps and press Connect. A platform can hold several accounts or pages.', [':url' => '/admin/config/services/crosspost']) . '</dd>';
+    $output .= '<dt>' . t('Choosing what can be shared') . '</dt><dd>' . t('On <a href=":url">Settings</a>, tick the content types that get a Share tab, and set the public address of the site if visitors do not use the address of the CMS.', [':url' => '/admin/config/services/crosspost/settings']) . '</dd>';
+    $output .= '<dt>' . t('Sharing') . '</dt><dd>' . t('Open the Share tab on a page, write the words once, tick the accounts and press the button. A page that is not public yet waits. Waiting pages go out when cron runs, or when a deploy pipeline runs <code>drush crosspost:share</code>.') . '</dd>';
+    $output .= '</dl>';
+    return $output;
+  }
+  return NULL;
+}
+
+/**
+ * Implements hook_theme().
+ */
+function crosspost_theme(): array {
+  return [
+    'crosspost_guide' => [
+      'variables' => ['platform' => '', 'guide' => NULL, 'checked' => ''],
+    ],
+  ];
+}
+
+/**
+ * Prepares variables for the setup guide template.
+ */
+function template_preprocess_crosspost_guide(array &$variables): void {
+  $checked = strtotime($variables['guide']->checked . ' 12:00:00 UTC');
+  $variables['checked'] = $checked ? \Drupal::service('date.formatter')->format($checked, 'custom', 'j F Y') : $variables['guide']->checked;
+}
+
+/**
+ * Implements hook_cron().
+ */
+function crosspost_cron(): void {
+  \Drupal::service('crosspost.sharer')->processDue();
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert() for nodes.
+ */
+function crosspost_node_insert(NodeInterface $node): void {
+  \Drupal::service('crosspost.auto_share')->consider($node);
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_update() for nodes.
+ */
+function crosspost_node_update(NodeInterface $node): void {
+  // Drupal 11.2 replaced the "original" property with a method.
+  $original = method_exists($node, 'getOriginal') ? $node->getOriginal() : ($node->original ?? NULL);
+  \Drupal::service('crosspost.auto_share')->consider($node, $original);
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_delete() for nodes.
+ *
+ * What was posted stays in the log; what had not gone out is dropped.
+ */
+function crosspost_node_delete(NodeInterface $node): void {
+  $storage = \Drupal::entityTypeManager()->getStorage('crosspost_announcement');
+  $ids = $storage->getQuery()
+    ->accessCheck(FALSE)
+    ->condition('node', $node->id())
+    ->condition('state', AnnouncementInterface::POSTED, '<>')
+    ->execute();
+  $storage->delete($storage->loadMultiple($ids));
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_delete() for connections.
+ */
+function crosspost_crosspost_connection_delete(EntityInterface $connection): void {
+  if ($connection instanceof ConnectionInterface) {
+    \Drupal::state()->delete('crosspost.problem.' . $connection->id());
+  }
+}

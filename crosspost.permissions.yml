@@ -1,0 +1,10 @@
+administer crosspost:
+  title: 'Administer Crosspost'
+  description: 'Connect and disconnect accounts, and change the settings.'
+  restrict access: true
+share content with crosspost:
+  title: 'Share content'
+  description: 'Use the Share tab on content.'
+view crosspost log:
+  title: 'View the log'
+  description: 'See what was shared across the site, and what each platform answered.'

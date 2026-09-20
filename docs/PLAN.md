@@ -1,7 +1,8 @@
 # Crosspost: build plan
 
-Written 2026-09-19. Status: the adapter framework exists; the screens, the
-record and the platform adapters do not yet.
+Written 2026-09-19. Status, 2026-09-20: steps 1 to 3 of the build order are
+done, and the Drush command of step 4. The remote ledger and the other
+platforms are not.
 
 ## What it is
 

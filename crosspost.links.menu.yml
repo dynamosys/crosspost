@@ -1,0 +1,5 @@
+crosspost.connections:
+  title: 'Crosspost'
+  description: 'Connect social accounts, choose the content types to share, and read the log.'
+  parent: system.admin_config_services
+  route_name: crosspost.connections

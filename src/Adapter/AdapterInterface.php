@@ -31,6 +31,19 @@ interface AdapterInterface extends PluginInspectionInterface {
   public function limits(): Limits;
 
   /**
+   * What the adapter needs to know to connect one account.
+   *
+   * @return \Drupal\crosspost\Adapter\CredentialField[]
+   *   The fields, in the order to ask for them.
+   */
+  public function credentialFields(): array;
+
+  /**
+   * What one connection is called on this platform: an account, a page.
+   */
+  public function accountNoun(): string;
+
+  /**
    * Asks the platform which account the credentials belong to.
    *
    * Sends nothing public. Used by the Test operation and after connecting.

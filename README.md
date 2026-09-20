@@ -6,9 +6,10 @@ post and platform, so nothing goes out twice and nothing links to a page
 that is not there yet. That makes it suitable for static and decoupled
 sites, where saving in the CMS does not mean the page is public.
 
-**Status: early development.** The adapter framework exists. The screens,
-the record and the platform adapters do not yet. Do not install it on a
-production site.
+**Status: early development.** Connecting accounts, the settings, the Share
+tab, the log, sharing by itself, and the Bluesky and Mastodon adapters work
+and are tested. The other platforms are not written yet. Do not install it
+on a production site.
 
 ## What it is, and is not
 
@@ -25,14 +26,32 @@ It is not a login module. It does not sign visitors in with social accounts.
 Your site uses your own platform apps and keys. The module has no service,
 account or subscription of its own.
 
-## Planned platforms
+## Platforms
 
-Bluesky, Facebook Page, Instagram, LinkedIn, Mastodon, Reddit, Threads, X.
-Other modules can add platforms: an adapter is a plugin.
+Working: Bluesky, Mastodon. Planned: Facebook Page, Instagram, LinkedIn,
+Reddit, Threads, X. A platform can hold several accounts or pages. Other
+modules can add platforms: an adapter is a plugin.
+
+## Using it
+
+1. **Connections** (Configuration, Web services, Crosspost): open a
+   platform's guide, follow its steps, press Connect. Secrets are kept in
+   the [Key](https://www.drupal.org/project/key) module; Crosspost stores
+   only which key to use.
+2. **Settings**: tick the content types that get a Share tab. On a static
+   or decoupled site, enter the public address of the site. Per type, choose
+   the tag field that suggests hashtags, the accounts that start ticked, and
+   whether a newly published page waits for a person or is shared by itself.
+3. **Share tab** on a page: write the words once, tick the accounts, press
+   the button. A page that is not public yet waits until its address
+   answers. The log under the form shows where the page went and what each
+   platform said.
+4. Waiting pages go out when cron runs. A deploy pipeline can run
+   `drush crosspost:share` right after the deploy instead.
 
 ## Requirements
 
-Drupal 10.3 or later, or Drupal 11. PHP 8.1 or later.
+Drupal 10.3 or later, or Drupal 11. PHP 8.1 or later. The Key module.
 
 ## Writing an adapter
 
@@ -40,12 +59,15 @@ An adapter is a class in `src/Plugin/CrosspostAdapter` with the
 `#[CrosspostAdapter]` attribute, extending
 `Drupal\crosspost\Adapter\AdapterBase`. It provides:
 
-- `guide()`: the setup guide.
+- `guide()`: the setup guide, checked against the platform's documentation.
 - `limits()`: what one post may carry.
+- `credentialFields()`: what it needs to know to connect an account.
 - `identify()`: asks the platform whose credentials these are.
 - `post()`: posts a message and returns the platform's answer as a `Result`.
 
-See `tests/modules/crosspost_test` for the smallest working example.
+`HttpAdapterBase` helps with platforms reached over HTTP. See
+`src/Plugin/CrosspostAdapter/Mastodon.php` for a short real adapter, and
+`tests/modules/crosspost_test` for one that posts nowhere.
 
 ## Development
 

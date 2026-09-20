@@ -1,0 +1,12 @@
+admin:
+  css:
+    theme:
+      css/crosspost.admin.css: {}
+share:
+  js:
+    js/crosspost.share.js: {}
+  dependencies:
+    - core/drupal
+    - core/drupalSettings
+    - core/once
+    - crosspost/admin

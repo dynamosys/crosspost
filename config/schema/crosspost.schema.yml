@@ -1,0 +1,64 @@
+crosspost.connection.*:
+  type: config_entity
+  label: 'Crosspost connection'
+  mapping:
+    id:
+      type: string
+      label: 'ID'
+    label:
+      type: label
+      label: 'Account'
+    adapter:
+      type: string
+      label: 'Adapter'
+    settings:
+      type: sequence
+      label: 'Values that are not secret'
+      sequence:
+        type: string
+    keys:
+      type: sequence
+      label: 'Key IDs of the secret values'
+      sequence:
+        type: string
+
+crosspost.settings:
+  type: config_object
+  label: 'Crosspost settings'
+  mapping:
+    base_url:
+      type: uri
+      label: 'Public address of the site'
+    check_every:
+      type: integer
+      label: 'Minutes between checks of a page that is not public yet'
+    check_for:
+      type: integer
+      label: 'Hours to keep checking'
+    retries:
+      type: integer
+      label: 'Times to try again when a platform cannot be reached'
+    types:
+      type: sequence
+      label: 'Content types'
+      sequence:
+        type: mapping
+        label: 'Content type'
+        mapping:
+          enabled:
+            type: boolean
+            label: 'Share tab'
+          tag_field:
+            type: string
+            label: 'Hashtags from'
+          all_connections:
+            type: boolean
+            label: 'All connected accounts start ticked'
+          connections:
+            type: sequence
+            label: 'Connections that start ticked'
+            sequence:
+              type: string
+          auto:
+            type: boolean
+            label: 'Share by itself once the page is public'
