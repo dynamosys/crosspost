@@ -56,8 +56,11 @@ the page exists yet, and it never posts the same thing twice.
   handling), `post(Announcement): Result`. One class per platform; third
   parties add platforms from their own modules.
 - **Connection config entity**: adapter id, account label, key ids, token
-  expiry. One per platform to begin with; the schema allows several.
-- **Announcement**: a content entity per node and platform: text, state,
+  expiry. A platform can hold several connections from the first version
+  (two Facebook pages, two Bluesky accounts); each has its own keys, Test
+  and Disconnect. Where one sign-in covers several accounts (Facebook lists
+  the pages a person manages), the site owner ticks which to connect.
+- **Announcement**: a content entity per node and connection: text, state,
   tries, next try, the platform's post id and URL, the platform's reply.
   This is the ledger. Storage behind an interface so a pipeline can keep it
   elsewhere through a "remote ledger" implementation.
@@ -67,9 +70,12 @@ the page exists yet, and it never posts the same thing twice.
 - **Queue + triggers**: a queue worker drains due announcements with
   back-off. Cron for conventional sites; `drush crosspost:share` for
   pipelines, run after a successful deploy.
-- **Settings**: content types that get the Share tab, the public base URL,
-  the tag field that feeds hashtags, automatic sharing per type (off by
-  default), retry limits.
+- **Settings**: the public base URL; per content type, whether it gets the
+  Share tab (none on a fresh install), the tag field that feeds hashtags,
+  which connections start ticked, and whether sharing waits for a person
+  (default) or happens by itself; how often a page's address is checked
+  and for how long; how many times a failure is retried. Content types
+  (nodes) first; other entities with a public page can follow.
 - **Permissions**: administer connections; share content; view the log.
 - Drupal 10.3+ and 11. Dependencies: Key. GPL-2.0-or-later. Coding
   standards, PHPStan, kernel and functional tests, GitLab CI template.
