@@ -96,3 +96,13 @@ function crosspost_crosspost_connection_delete(EntityInterface $connection): voi
     \Drupal::state()->delete('crosspost.problem.' . $connection->id());
   }
 }
+
+/**
+ * Implements hook_preprocess_HOOK() for the top bar's page actions.
+ *
+ * The Share button stands beside Edit in the top bar (see the Share top bar
+ * item), so it is taken out of the menu of remaining actions.
+ */
+function crosspost_preprocess_top_bar_page_actions(array &$variables): void {
+  unset($variables['page_actions']['crosspost.share']);
+}

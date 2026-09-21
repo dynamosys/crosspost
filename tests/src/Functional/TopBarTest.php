@@ -26,7 +26,7 @@ class TopBarTest extends BrowserTestBase {
   protected $defaultTheme = 'stark';
 
   /**
-   * The button shows on a page of a switched-on type, to those who may share.
+   * The button shows once, on a switched-on type, to those who may share.
    */
   public function testShareButton(): void {
     $this->drupalCreateContentType(['type' => 'article', 'name' => 'Article']);
@@ -55,6 +55,7 @@ class TopBarTest extends BrowserTestBase {
     ]));
     $this->drupalGet('node/' . $article->id());
     $this->assertSession()->elementExists('css', $button);
+    $this->assertSession()->elementsCount('css', $button, 1);
     $this->drupalGet('node/' . $page->id());
     $this->assertSession()->elementNotExists('css', '.top-bar a[href$="/share"]');
 
