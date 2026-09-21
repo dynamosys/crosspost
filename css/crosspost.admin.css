@@ -94,9 +94,9 @@ tr.crosspost-guide-row > td {
   background: #e3f6ea;
 }
 .crosspost-readonly {
+  background: #f3f4f9;
   font-family: ui-monospace, Menlo, Consolas, monospace;
   font-size: 0.8125rem;
-  background: #f3f4f9;
 }
 .crosspost-accounts .form-item {
   margin: 0 0 0.6rem;

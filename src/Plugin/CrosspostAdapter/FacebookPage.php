@@ -166,7 +166,7 @@ class FacebookPage extends HttpAdapterBase implements OAuthAdapterInterface {
     if ($response->getStatusCode() !== 200 || empty($data['id'])) {
       return $this->refusal($response, $data);
     }
-    // The ID reads "pageid_postid".
+    // The ID is the page's ID, an underscore, and the post's ID.
     [$page, $post] = explode('_', (string) $data['id'], 2) + [1 => ''];
     $url = $post !== '' ? 'https://www.facebook.com/' . $page . '/posts/' . $post : 'https://www.facebook.com/' . $data['id'];
     return new Result(Outcome::Posted, (string) $this->t('Accepted.'), 200, (string) $data['id'], $url);
