@@ -32,13 +32,27 @@ class TopBarTest extends BrowserTestBase {
     $this->drupalCreateContentType(['type' => 'article', 'name' => 'Article']);
     $this->drupalCreateContentType(['type' => 'page', 'name' => 'Basic page']);
     $this->config('crosspost.settings')
-      ->set('types', ['article' => ['enabled' => TRUE, 'tag_field' => '', 'all_connections' => TRUE, 'connections' => [], 'auto' => FALSE]])
+      ->set('types', [
+        'article' => [
+          'enabled' => TRUE,
+          'tag_field' => '',
+          'all_connections' => TRUE,
+          'connections' => [],
+          'auto' => FALSE,
+        ],
+      ])
       ->save();
     $article = $this->drupalCreateNode(['type' => 'article']);
     $page = $this->drupalCreateNode(['type' => 'page']);
     $button = '.top-bar a[href$="/node/' . $article->id() . '/share"]';
 
-    $this->drupalLogin($this->drupalCreateUser(['access navigation', 'access content', 'edit any article content', 'edit any page content', 'share content with crosspost']));
+    $this->drupalLogin($this->drupalCreateUser([
+      'access navigation',
+      'access content',
+      'edit any article content',
+      'edit any page content',
+      'share content with crosspost',
+    ]));
     $this->drupalGet('node/' . $article->id());
     $this->assertSession()->elementExists('css', $button);
     $this->drupalGet('node/' . $page->id());
