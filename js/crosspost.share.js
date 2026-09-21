@@ -20,14 +20,16 @@
             Object.keys(limits).forEach((id) => {
               const limit = limits[id];
               const box = form.querySelector(
-                `input[type = "checkbox"][value = "${id}"]`,
+                `input[type="checkbox"][value="${id}"]`,
               );
               if (box && !box.checked) {
                 return;
               }
-              const own = form.querySelector(`[data - crosspost - override = "${id}"]`);
+              const own = form.querySelector(
+                `[data-crosspost-override="${id}"]`,
+              );
               const text = own && own.value.trim() ? own.value : main.value;
-              const link = limit.link === NULL ? length(url) : limit.link;
+              const link = limit.link === null ? length(url) : limit.link;
               const used = length(text) + 2 + link;
               const pill = document.createElement('span');
               pill.className = 'crosspost-count';

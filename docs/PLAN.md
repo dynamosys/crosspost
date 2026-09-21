@@ -93,3 +93,5 @@ the page exists yet, and it never posts the same thing twice.
 6. Reddit, X.
 7. README, help pages, drupal.org project page, first alpha; then the
    security advisory coverage application.
+8. A browser test with JavaScript for the Share tab's character counts, and
+   ESLint in CI: the PHP test suite does not run the script.
