@@ -17,4 +17,6 @@ crosspost.share:
   title: 'Share'
   route_name: crosspost.share
   base_route: entity.node.canonical
-  weight: 15
+  # After View and Edit, before Delete (10): admin themes fold the tabs that
+  # do not fit into a menu, and this one is used more than Delete.
+  weight: 5
