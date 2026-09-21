@@ -10,9 +10,12 @@ use Drupal\Core\State\StateInterface;
 use Drupal\Core\Url;
 use Drupal\crosspost\Adapter\AdapterException;
 use Drupal\crosspost\Adapter\AdapterPluginManager;
+use Drupal\crosspost\Adapter\OAuthAdapterInterface;
 use Drupal\crosspost\Credentials;
 use Drupal\crosspost\Entity\ConnectionInterface;
+use Drupal\crosspost\Form\ChooseAccountsForm;
 use Drupal\crosspost\Form\ConnectForm;
+use Drupal\crosspost\OAuthFlow;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,6 +30,7 @@ class ConnectionsController extends ControllerBase {
     protected Credentials $credentials,
     protected StateInterface $problems,
     protected DateFormatterInterface $dateFormatter,
+    protected OAuthFlow $flow,
   ) {}
 
   /**
@@ -38,6 +42,7 @@ class ConnectionsController extends ControllerBase {
       $container->get('crosspost.credentials'),
       $container->get('state'),
       $container->get('date.formatter'),
+      $container->get('crosspost.oauth_flow'),
     );
   }
 
@@ -110,7 +115,12 @@ class ConnectionsController extends ControllerBase {
         $cells[] = [
           'data' => [
             '#type' => 'operations',
-            '#links' => [
+            '#links' => ($problem && $adapter instanceof OAuthAdapterInterface ? [
+              'reconnect' => [
+                'title' => $this->t('Reconnect'),
+                'url' => Url::fromRoute('crosspost.connection.reconnect', ['crosspost_connection' => $connection->id()]),
+              ],
+            ] : []) + [
               'test' => [
                 'title' => $this->t('Test'),
                 'url' => Url::fromRoute('crosspost.connection.test', ['crosspost_connection' => $connection->id()]),
@@ -125,7 +135,12 @@ class ConnectionsController extends ControllerBase {
       if ($is_open) {
         $rows[] = [
           'class' => ['crosspost-guide-row'],
-          'data' => [['colspan' => 5, 'data' => $this->formBuilder()->getForm(ConnectForm::class, $id)]],
+          'data' => [
+            [
+              'colspan' => 5,
+              'data' => $this->formBuilder()->getForm($this->backFromPlatform($id) ? ChooseAccountsForm::class : ConnectForm::class, $id),
+            ],
+          ],
         ];
       }
     }
@@ -167,18 +182,25 @@ class ConnectionsController extends ControllerBase {
       $who = $adapter->identify($this->credentials->resolve($crosspost_connection));
       $this->problems->delete('crosspost.problem.' . $crosspost_connection->id());
       $this->messenger()->addStatus($this->t('@platform answered: these keys belong to %who. Nothing was posted.', [
-        '@platform' => $adapter->label(),
+        '@platform' => $adapter->platformName(),
         '%who' => $who,
       ]));
     }
     catch (AdapterException $e) {
       $this->problems->set('crosspost.problem.' . $crosspost_connection->id(), $e->getMessage());
       $this->messenger()->addError($this->t('@platform did not accept the keys. Its words: %reply', [
-        '@platform' => $adapter->label(),
+        '@platform' => $adapter->platformName(),
         '%reply' => $e->getMessage(),
       ]));
     }
     return new RedirectResponse(Url::fromRoute('crosspost.connections')->toString());
+  }
+
+  /**
+   * Whether the person has just come back from a platform with an approval.
+   */
+  protected function backFromPlatform(string $adapter_id): bool {
+    return !empty($this->flow->pending($adapter_id)['approval']);
   }
 
   /**

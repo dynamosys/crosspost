@@ -7,8 +7,8 @@ that is not there yet. That makes it suitable for static and decoupled
 sites, where saving in the CMS does not mean the page is public.
 
 **Status: early development.** Connecting accounts, the settings, the Share
-tab, the log, sharing by itself, and the Bluesky and Mastodon adapters work
-and are tested. The other platforms are not written yet. Do not install it
+tab, the log, sharing by itself, and the Bluesky, Facebook Page and Mastodon
+adapters work and are tested. The other platforms are not written yet. Do not install it
 on a production site.
 
 ## What it is, and is not
@@ -28,7 +28,7 @@ account or subscription of its own.
 
 ## Platforms
 
-Working: Bluesky, Mastodon. Planned: Facebook Page, Instagram, LinkedIn,
+Working: Bluesky, Facebook Page, Mastodon. Planned: Instagram, LinkedIn,
 Reddit, Threads, X. A platform can hold several accounts or pages. Other
 modules can add platforms: an adapter is a plugin.
 
@@ -64,6 +64,14 @@ An adapter is a class in `src/Plugin/CrosspostAdapter` with the
 - `credentialFields()`: what it needs to know to connect an account.
 - `identify()`: asks the platform whose credentials these are.
 - `post()`: posts a message and returns the platform's answer as a `Result`.
+
+A platform that is connected by approving an app on the platform itself
+implements `OAuthAdapterInterface` as well: `authorizeUrl()` gives the address
+to approve at, and `approval()` turns the code that comes back into the
+accounts to choose from, each with its tokens. Crosspost keeps those tokens in
+the database, outside configuration, and hands them to the adapter with the
+other credentials. `src/Plugin/CrosspostAdapter/FacebookPage.php` is the
+example.
 
 `HttpAdapterBase` helps with platforms reached over HTTP. See
 `src/Plugin/CrosspostAdapter/Mastodon.php` for a short real adapter, and

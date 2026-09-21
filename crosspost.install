@@ -1,0 +1,20 @@
+<?php
+
+/**
+ * @file
+ * Install and update functions for Crosspost.
+ */
+
+declare(strict_types=1);
+
+use Drupal\crosspost\Entity\Announcement;
+
+/**
+ * Adds the "access lost" mark to announcements.
+ */
+function crosspost_update_10001(): void {
+  $manager = \Drupal::entityDefinitionUpdateManager();
+  if (!$manager->getFieldStorageDefinition('access_lost', 'crosspost_announcement')) {
+    $manager->installFieldStorageDefinition('access_lost', 'crosspost_announcement', 'crosspost', Announcement::accessLostDefinition());
+  }
+}

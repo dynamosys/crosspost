@@ -25,6 +25,10 @@ class CrosspostAdapter extends Plugin {
    * @param \Drupal\Core\StringTranslation\TranslatableMarkup|null $account_noun
    *   (optional) What one connection is called, lower case: "page" for a
    *   platform of pages. Defaults to "account".
+   * @param \Drupal\Core\StringTranslation\TranslatableMarkup|null $platform
+   *   (optional) The platform's name for use in sentences, when the label
+   *   names a kind of account: "Facebook" for "Facebook Page". Defaults to
+   *   the label.
    * @param class-string|null $deriver
    *   (optional) The deriver class.
    */
@@ -32,6 +36,7 @@ class CrosspostAdapter extends Plugin {
     public readonly string $id,
     public readonly TranslatableMarkup $label,
     public readonly ?TranslatableMarkup $account_noun = NULL,
+    public readonly ?TranslatableMarkup $platform = NULL,
     public readonly ?string $deriver = NULL,
   ) {}
 

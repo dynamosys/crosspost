@@ -1,8 +1,8 @@
 # Crosspost: build plan
 
 Written 2026-09-19. Status, 2026-09-20: steps 1 to 3 of the build order are
-done, and the Drush command of step 4. The remote ledger and the other
-platforms are not.
+done, the Drush command of step 4, and of step 5 the approve-an-app connect
+flow with Facebook Page. The remote ledger and the other platforms are not.
 
 ## What it is
 

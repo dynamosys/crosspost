@@ -2,9 +2,12 @@ services:
   plugin.manager.crosspost_adapter:
     class: Drupal\crosspost\Adapter\AdapterPluginManager
     parent: default_plugin_manager
+  crosspost.tokens:
+    class: Drupal\crosspost\TokenStore
+    arguments: ['@keyvalue']
   crosspost.credentials:
     class: Drupal\crosspost\Credentials
-    arguments: ['@key.repository']
+    arguments: ['@key.repository', '@crosspost.tokens']
   crosspost.public_page:
     class: Drupal\crosspost\PublicPage
     arguments: ['@config.factory', '@http_client']
@@ -20,3 +23,6 @@ services:
   crosspost.log_builder:
     class: Drupal\crosspost\LogBuilder
     arguments: ['@entity_type.manager', '@date.formatter', '@redirect.destination']
+  crosspost.oauth_flow:
+    class: Drupal\crosspost\OAuthFlow
+    arguments: ['@tempstore.private', '@plugin.manager.crosspost_adapter', '@crosspost.credentials']

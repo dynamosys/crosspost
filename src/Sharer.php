@@ -193,7 +193,8 @@ class Sharer {
 
       case Outcome::Refused:
         $this->end($announcement, AnnouncementInterface::REFUSED, $result->reply);
-        if (in_array($result->status, [401, 403], TRUE)) {
+        $announcement->set('access_lost', $result->accessLost);
+        if ($result->accessLost || in_array($result->status, [401, 403], TRUE)) {
           $this->state->set('crosspost.problem.' . $connection->id(), $result->reply);
         }
         break;
@@ -231,6 +232,29 @@ class Sharer {
     $announcement->set('queued', $now);
     $announcement->set('next_try', $now);
     $announcement->save();
+  }
+
+  /**
+   * Puts back in line what a connection refused because it had lost access.
+   *
+   * Called once the connection has its access again.
+   *
+   * @return int
+   *   How many announcements went back in line.
+   */
+  public function requeueAccessLost(string $connection_id): int {
+    $storage = $this->entityTypeManager->getStorage('crosspost_announcement');
+    $ids = $storage->getQuery()
+      ->accessCheck(FALSE)
+      ->condition('connection', $connection_id)
+      ->condition('state', AnnouncementInterface::REFUSED)
+      ->condition('access_lost', 1)
+      ->execute();
+    foreach ($storage->loadMultiple($ids) as $announcement) {
+      $announcement->set('access_lost', FALSE);
+      $this->requeue($announcement);
+    }
+    return count($ids);
   }
 
   /**

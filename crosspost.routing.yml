@@ -22,6 +22,23 @@ entity.crosspost_connection.delete_form:
   requirements:
     _permission: 'administer crosspost'
 
+crosspost.connection.reconnect:
+  path: '/admin/config/services/crosspost/{crosspost_connection}/reconnect'
+  defaults:
+    _controller: '\Drupal\crosspost\Controller\OAuthController::reconnect'
+  requirements:
+    _permission: 'administer crosspost'
+    _csrf_token: 'TRUE'
+
+crosspost.callback:
+  path: '/crosspost/callback/{adapter}'
+  defaults:
+    _controller: '\Drupal\crosspost\Controller\OAuthController::callback'
+  requirements:
+    _permission: 'administer crosspost'
+  options:
+    no_cache: TRUE
+
 crosspost.settings:
   path: '/admin/config/services/crosspost/settings'
   defaults:

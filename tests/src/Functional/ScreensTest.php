@@ -71,12 +71,12 @@ class ScreensTest extends BrowserTestBase {
 
     // Connections: platforms in alphabetical order, none connected.
     $this->drupalGet('admin/config/services/crosspost');
-    $assert->pageTextMatches('/Another platform.*Bluesky.*Mastodon.*Memory/s');
+    $assert->pageTextMatches('/Another platform.*Bluesky.*Facebook Page.*Gate.*Mastodon.*Memory/s');
     $assert->pageTextContains('Not connected');
 
     // The guide comes first, then the fields. A refusal is in the platform's
     // words, and nothing is saved.
-    $this->clickLink('Set up', 3);
+    $this->clickLink('Set up', 5);
     $assert->pageTextContains('Set up Memory');
     $assert->pageTextContains('What you create');
     $assert->pageTextContains('Enter any name but "nobody".');

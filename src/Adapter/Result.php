@@ -22,6 +22,9 @@ final class Result {
    *   The platform's ID for the post, when it was taken.
    * @param string|null $remoteUrl
    *   Where the post can be seen, when it was taken.
+   * @param bool $accessLost
+   *   Whether the platform says the connection's access is no longer valid,
+   *   so the account has to be connected again.
    */
   public function __construct(
     public readonly Outcome $outcome,
@@ -29,6 +32,7 @@ final class Result {
     public readonly ?int $status = NULL,
     public readonly ?string $remoteId = NULL,
     public readonly ?string $remoteUrl = NULL,
+    public readonly bool $accessLost = FALSE,
   ) {}
 
 }

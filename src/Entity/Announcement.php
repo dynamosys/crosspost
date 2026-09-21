@@ -120,6 +120,7 @@ class Announcement extends ContentEntityBase implements AnnouncementInterface {
       ->setLabel(t('What the platform said'));
     $fields['http_status'] = BaseFieldDefinition::create('integer')
       ->setLabel(t("The HTTP status of the platform's answer"));
+    $fields['access_lost'] = static::accessLostDefinition();
     $fields['uid'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Shared by'))
       ->setSetting('target_type', 'user');
@@ -128,6 +129,15 @@ class Announcement extends ContentEntityBase implements AnnouncementInterface {
     $fields['changed'] = BaseFieldDefinition::create('changed')
       ->setLabel(t('Changed'));
     return $fields;
+  }
+
+  /**
+   * The field that marks a refusal as "the account has to be connected again".
+   */
+  public static function accessLostDefinition(): BaseFieldDefinition {
+    return BaseFieldDefinition::create('boolean')
+      ->setLabel(t('Refused because the connection lost its access'))
+      ->setDefaultValue(FALSE);
   }
 
 }

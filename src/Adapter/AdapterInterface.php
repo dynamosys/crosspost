@@ -44,6 +44,11 @@ interface AdapterInterface extends PluginInspectionInterface {
   public function accountNoun(): string;
 
   /**
+   * The platform's name for use in sentences: "Facebook", not "Facebook Page".
+   */
+  public function platformName(): string;
+
+  /**
    * Asks the platform which account the credentials belong to.
    *
    * Sends nothing public. Used by the Test operation and after connecting.

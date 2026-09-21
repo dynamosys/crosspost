@@ -37,7 +37,7 @@ function crosspost_help($route_name, RouteMatchInterface $route_match) {
 function crosspost_theme(): array {
   return [
     'crosspost_guide' => [
-      'variables' => ['platform' => '', 'guide' => NULL, 'checked' => ''],
+      'variables' => ['platform' => '', 'name' => '', 'guide' => NULL, 'checked' => '', 'step' => 0, 'facts' => TRUE],
     ],
   ];
 }
@@ -94,6 +94,7 @@ function crosspost_node_delete(NodeInterface $node): void {
 function crosspost_crosspost_connection_delete(EntityInterface $connection): void {
   if ($connection instanceof ConnectionInterface) {
     \Drupal::state()->delete('crosspost.problem.' . $connection->id());
+    \Drupal::service('crosspost.tokens')->delete((string) $connection->id());
   }
 }
 

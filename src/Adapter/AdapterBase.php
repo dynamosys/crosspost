@@ -21,6 +21,13 @@ abstract class AdapterBase extends PluginBase implements AdapterInterface {
   /**
    * {@inheritdoc}
    */
+  public function platformName(): string {
+    return (string) ($this->pluginDefinition['platform'] ?? $this->pluginDefinition['label']);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function accountNoun(): string {
     return (string) ($this->pluginDefinition['account_noun'] ?? $this->t('account'));
   }

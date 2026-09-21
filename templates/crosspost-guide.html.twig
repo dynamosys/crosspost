@@ -5,13 +5,25 @@
  * steps.
  *
  * Available variables:
- * - platform: The platform's name.
+ * - platform: The adapter's label, for the title.
+ * - name: The platform's name for use in sentences.
  * - guide: The \Drupal\crosspost\Adapter\Guide object.
  * - checked: The date the guide was last checked, formatted.
+ * - step: For a platform connected by approving an app there: the step the
+ *   person is at, 1 to 3. 0 for other platforms.
+ * - facts: Whether to show the facts and the steps, or the title only.
  */
 #}
 <div class="crosspost-guide__body">
   <h3 class="crosspost-guide__title">{{ 'Set up @platform'|t({'@platform': platform}) }}</h3>
+  {% if step %}
+    <ol class="crosspost-stepper">
+      <li{% if step == 1 %} class="is-current" aria-current="step"{% elseif step > 1 %} class="is-done"{% endif %}>{{ 'Your app'|t }}</li>
+      <li{% if step == 2 %} class="is-current" aria-current="step"{% elseif step > 2 %} class="is-done"{% endif %}>{{ 'Approve on @platform'|t({'@platform': name|default(platform)}) }}</li>
+      <li{% if step == 3 %} class="is-current" aria-current="step"{% endif %}>{{ 'Choose what to connect'|t }}</li>
+    </ol>
+  {% endif %}
+  {% if facts %}
   <dl class="crosspost-facts">
     <div class="crosspost-fact"><dt>{{ 'What you create'|t }}</dt><dd>{{ guide.create }}</dd></div>
     <div class="crosspost-fact"><dt>{{ 'Review'|t }}</dt><dd>{{ guide.review }}</dd></div>
@@ -24,6 +36,7 @@
     {% endfor %}
   </ol>
   <p class="crosspost-help">
-    {{ 'Checked against <a href=":url">@platform\'s documentation</a> on @date. Platforms change their rules; theirs is the last word.'|t({':url': guide.documentation, '@platform': platform, '@date': checked}) }}
+    {{ 'Checked against <a href=":url">@platform\'s documentation</a> on @date. Platforms change their rules; theirs is the last word.'|t({':url': guide.documentation, '@platform': name|default(platform), '@date': checked}) }}
   </p>
+  {% endif %}
 </div>

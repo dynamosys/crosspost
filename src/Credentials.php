@@ -12,7 +12,10 @@ use Drupal\key\KeyRepositoryInterface;
  */
 class Credentials {
 
-  public function __construct(protected KeyRepositoryInterface $keys) {}
+  public function __construct(
+    protected KeyRepositoryInterface $keys,
+    protected TokenStore $tokens,
+  ) {}
 
   /**
    * Resolves a connection's credentials.
@@ -21,10 +24,10 @@ class Credentials {
    *   The connection.
    *
    * @return array<string, string>
-   *   The values, secrets included, keyed by credential field name.
+   *   The values, secrets and tokens included, keyed by name.
    */
   public function resolve(ConnectionInterface $connection): array {
-    return $connection->getSettings() + $this->secrets($connection->getKeys());
+    return $connection->getSettings() + $this->secrets($connection->getKeys()) + $this->tokens->get((string) $connection->id());
   }
 
   /**

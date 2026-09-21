@@ -29,7 +29,7 @@ class AdapterPluginManagerTest extends KernelTestBase {
    */
   public function testDiscoveryIsAlphabetical(): void {
     $definitions = $this->container->get('plugin.manager.crosspost_adapter')->getDefinitions();
-    $this->assertSame(['another', 'bluesky', 'mastodon', 'memory'], array_keys($definitions));
+    $this->assertSame(['another', 'bluesky', 'facebook_page', 'gate', 'mastodon', 'memory'], array_keys($definitions));
   }
 
   /**
