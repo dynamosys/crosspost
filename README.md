@@ -88,6 +88,6 @@ The plan is in [docs/PLAN.md](docs/PLAN.md).
 
 Built and supported by [Dynamosys](https://www.drupal.org/dynamosys).
 
-## Licence
+## License
 
 GPL-2.0-or-later, like Drupal.

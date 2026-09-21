@@ -35,7 +35,7 @@ class Mastodon extends HttpAdapterBase {
       $this->t('500 characters on most servers, and every link counts as 23; the server builds the link card from the page'),
       [
         $this->t('Sign in to your Mastodon server. Open Preferences, then Development, and press New application.'),
-        $this->t('Give it a name, such as the name of this site. Under Scopes, tick <strong>write:statuses</strong> and <strong>profile</strong>, and untick the rest. On a server that does not offer "profile", tick <strong>read:accounts</strong> instead. Save.'),
+        $this->t('Give it a name, such as the name of this site. Under Scopes, tick <strong>write:statuses</strong> and <strong>profile</strong>, and clear the rest. On a server that does not offer "profile", tick <strong>read:accounts</strong> instead. Save.'),
         $this->t('Open the application you just made and copy <strong>Your access token</strong>.'),
         $this->t("In this site's Key module, add a key and paste the token as its value."),
         $this->t('Below, enter the address of your server, select the key, and press Connect.'),
