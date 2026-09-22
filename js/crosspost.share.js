@@ -30,7 +30,7 @@
               );
               const text = own && own.value.trim() ? own.value : main.value;
               const link = limit.link === null ? length(url) : limit.link;
-              const used = length(text) + 2 + link;
+              const used = link === 0 ? length(text) : length(text) + 2 + link;
               const pill = document.createElement('span');
               pill.className = 'crosspost-count';
               pill.classList.toggle('is-over', used > limit.max);

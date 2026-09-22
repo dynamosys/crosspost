@@ -37,7 +37,7 @@ class Bluesky extends HttpAdapterBase {
       $this->t('An app password, made in your Bluesky settings'),
       $this->t('None'),
       $this->t('Bluesky does not charge for this'),
-      $this->t("300 characters, the link included; the link card carries the page's title, description and picture, and a picture over 1 MB is left out"),
+      $this->t("300 characters of words; the link rides in the card, which carries the page's title, description and picture, and a picture over 1 MB is left out"),
       [
         $this->t('Sign in to Bluesky. Open Settings, then Privacy and security, then App passwords, and add an app password. Give it a name, such as the name of this site.'),
         $this->t('Copy the password Bluesky shows. It is shown only once. It is not your account password, and you can revoke it there at any time.'),
@@ -53,7 +53,8 @@ class Bluesky extends HttpAdapterBase {
    * {@inheritdoc}
    */
   public function limits(): Limits {
-    return new Limits(textLength: 300);
+    // The link rides in the card, not in the text.
+    return new Limits(textLength: 300, linkLength: 0);
   }
 
   /**
@@ -89,7 +90,9 @@ class Bluesky extends HttpAdapterBase {
     $service = $this->service($credentials);
     $auth = ['Authorization' => 'Bearer ' . $session['accessJwt']];
 
-    $text = trim($message->text) . "\n\n" . $message->url;
+    // The card below the post carries the link, so the text keeps its 300
+    // characters for words. Facets mark the hashtags.
+    $text = trim($message->text);
     $external = [
       'uri' => $message->url,
       'title' => $message->title,
@@ -102,7 +105,7 @@ class Bluesky extends HttpAdapterBase {
       '$type' => 'app.bsky.feed.post',
       'text' => $text,
       'createdAt' => gmdate('Y-m-d\TH:i:s.000\Z'),
-      'facets' => static::facets($text, $message->url),
+      'facets' => static::facets($text, ''),
       'embed' => ['$type' => 'app.bsky.embed.external', 'external' => $external],
     ];
     $response = $this->send('POST', $service . '/xrpc/com.atproto.repo.createRecord', [
@@ -131,7 +134,7 @@ class Bluesky extends HttpAdapterBase {
    */
   public static function facets(string $text, string $url): array {
     $facets = [];
-    $start = strrpos($text, $url);
+    $start = $url === '' ? FALSE : strrpos($text, $url);
     if ($start !== FALSE) {
       $facets[] = [
         'index' => ['byteStart' => $start, 'byteEnd' => $start + strlen($url)],

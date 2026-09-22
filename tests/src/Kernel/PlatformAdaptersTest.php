@@ -58,11 +58,13 @@ class PlatformAdaptersTest extends CrosspostKernelTestBase {
     $this->assertSame('https://bsky.app/profile/example.bsky.social/post/3k4duaz5vfs2b', $result->remoteUrl);
     $sent = json_decode((string) $this->requests[4]['request']->getBody(), TRUE);
     $this->assertSame('did:plc:abc', $sent['repo']);
-    $this->assertSame("Words #Tag\n\nhttps://www.example.com/a", $sent['record']['text']);
+    $this->assertSame('Words #Tag', $sent['record']['text'], 'The link rides in the card, not in the text.');
     $this->assertSame('app.bsky.embed.external', $sent['record']['embed']['$type']);
     $this->assertSame('bafk', $sent['record']['embed']['external']['thumb']['ref']['$link']);
     $this->assertSame('Title', $sent['record']['embed']['external']['title']);
-    $this->assertCount(2, $sent['record']['facets']);
+    $this->assertCount(1, $sent['record']['facets']);
+    $this->assertSame('Tag', $sent['record']['facets'][0]['features'][0]['tag']);
+    $this->assertSame(10, $adapter->limits()->used('Ten chars!', 'https://www.example.com/a-long-address'), 'The link costs nothing on Bluesky.');
     $this->assertSame('Bearer jwt', $this->requests[4]['request']->getHeaderLine('Authorization'));
     $this->assertSame('image/jpeg', $this->requests[3]['request']->getHeaderLine('Content-Type'));
   }

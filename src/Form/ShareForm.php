@@ -118,7 +118,7 @@ class ShareForm extends FormBase {
       '#default_value' => $draft ? $draft->getText() : $this->autoShare->defaultText($node),
       '#rows' => 5,
       '#required' => TRUE,
-      '#description' => $this->t("The link is added for you. Hashtags come from the page's tags; remove any you do not want."),
+      '#description' => $this->t("The link is added for you, in the text or in the card, as each platform wants it. Hashtags come from the page's tags; remove any you do not want."),
       '#attributes' => ['data-crosspost-text' => ''],
     ];
     $form['grid']['words']['counts'] = [
