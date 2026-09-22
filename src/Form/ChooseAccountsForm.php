@@ -118,6 +118,17 @@ class ChooseAccountsForm extends FormBase {
           '@noun' => $noun,
         ]),
       ];
+      if ($approval->granted) {
+        $form['granted'] = [
+          '#type' => 'html_tag',
+          '#tag' => 'p',
+          '#attributes' => ['class' => ['crosspost-help']],
+          '#value' => $this->t('What @platform says it granted: @list', [
+            '@platform' => $adapter->platformName(),
+            '@list' => implode(', ', $approval->granted),
+          ]),
+        ];
+      }
     }
     $form['missing'] = [
       '#type' => 'html_tag',

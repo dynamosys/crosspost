@@ -36,9 +36,13 @@ class FacebookPage extends HttpAdapterBase implements OAuthAdapterInterface {
   const VERSION = 'v25.0';
 
   /**
-   * To list the person's pages, to read them, and to publish on them.
+   * The permissions asked for.
+   *
+   * To list the person's pages, to read them, to publish on them, and to
+   * list the business portfolios the person belongs to: a page owned by a
+   * portfolio is not among the person's own pages without that.
    */
-  const SCOPE = 'pages_show_list,pages_read_engagement,pages_manage_posts';
+  const SCOPE = 'pages_show_list,pages_read_engagement,pages_manage_posts,business_management';
 
   /**
    * Meta's error codes that mean the token or its permissions are gone.
@@ -62,7 +66,7 @@ class FacebookPage extends HttpAdapterBase implements OAuthAdapterInterface {
         $this->t("In the app's Facebook Login settings, add the redirect address shown below to <strong>Valid OAuth Redirect URIs</strong>."),
         $this->t("In the app's basic settings, enter your privacy policy address and switch the app to <strong>Live</strong>. Posts made in Development mode are visible only to people with a role on the app."),
         $this->t("Copy the <strong>App ID</strong> into the field below. In this site's Key module, add a key with the <strong>App secret</strong> as its value, and select it."),
-        $this->t('Press Continue. Facebook asks you to approve the app for the pages you choose, then sends you back here. The site asks for three permissions and nothing more: to list the pages you manage, to read them, and to publish posts on them.'),
+        $this->t('Press Continue. Facebook asks you to approve the app for the pages you choose, then sends you back here. The site asks for four permissions and nothing more: to list the pages you manage, to read them, to publish posts on them, and to list the business portfolios you belong to, because a page owned by a portfolio is not shown otherwise.'),
       ],
       'https://developers.facebook.com/docs/pages-api/posts',
       '2026-09-20',
@@ -120,9 +124,36 @@ class FacebookPage extends HttpAdapterBase implements OAuthAdapterInterface {
       'limit' => 100,
       'access_token' => $token,
     ]);
+    // What the person granted, so an empty page list can be explained.
+    $granted = [];
+    foreach ($this->ask('me/permissions', ['access_token' => $token])['data'] ?? [] as $permission) {
+      if (($permission['status'] ?? '') === 'granted') {
+        $granted[] = (string) $permission['permission'];
+      }
+    }
+
+    // A page owned by a business portfolio is not among a person's own
+    // pages. Ask each portfolio the person belongs to for its pages too.
+    $found = $pages['data'] ?? [];
+    $seen = array_column($found, 'id', 'id');
+    foreach ($this->askQuietly('me/businesses', ['fields' => 'id,name', 'limit' => 100, 'access_token' => $token])['data'] ?? [] as $business) {
+      foreach (['owned_pages', 'client_pages'] as $kind) {
+        $owned = $this->askQuietly($business['id'] . '/' . $kind, [
+          'fields' => 'id,name,access_token,tasks',
+          'limit' => 100,
+          'access_token' => $token,
+        ]);
+        foreach ($owned['data'] ?? [] as $page) {
+          if (!isset($seen[$page['id']])) {
+            $seen[$page['id']] = $page['id'];
+            $found[] = $page;
+          }
+        }
+      }
+    }
 
     $accounts = [];
-    foreach ($pages['data'] ?? [] as $page) {
+    foreach ($found as $page) {
       $may_post = in_array('CREATE_CONTENT', $page['tasks'] ?? [], TRUE);
       $accounts[] = new Account(
         (string) $page['id'],
@@ -133,7 +164,7 @@ class FacebookPage extends HttpAdapterBase implements OAuthAdapterInterface {
         (string) ($may_post ? $this->t('Page · you can create content') : $this->t('Your role on this page does not allow posting, so it cannot be connected.')),
       );
     }
-    return new Approval((string) ($me['name'] ?? ''), $accounts);
+    return new Approval((string) ($me['name'] ?? ''), $accounts, $granted);
   }
 
   /**
@@ -204,6 +235,21 @@ class FacebookPage extends HttpAdapterBase implements OAuthAdapterInterface {
       throw new AdapterException($words);
     }
     return $data;
+  }
+
+  /**
+   * Asks the Graph API and returns an empty answer instead of throwing.
+   *
+   * For the extra questions whose refusal should not stop the connection:
+   * a person with no business portfolio, or one the app may not read.
+   */
+  protected function askQuietly(string $path, array $query): array {
+    try {
+      return $this->ask($path, $query);
+    }
+    catch (AdapterException) {
+      return [];
+    }
   }
 
   /**

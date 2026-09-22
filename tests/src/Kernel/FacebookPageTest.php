@@ -28,7 +28,7 @@ class FacebookPageTest extends CrosspostKernelTestBase {
     parse_str((string) parse_url($url, PHP_URL_QUERY), $query);
     $this->assertSame('123', $query['client_id']);
     $this->assertSame('abc', $query['state']);
-    $this->assertSame('pages_show_list,pages_read_engagement,pages_manage_posts', $query['scope']);
+    $this->assertSame('pages_show_list,pages_read_engagement,pages_manage_posts,business_management', $query['scope']);
     $this->assertSame('https://cms.example.com/crosspost/callback/facebook_page', $query['redirect_uri']);
     $this->assertStringNotContainsString('shh', $url, 'The secret never goes to the browser.');
   }
@@ -53,14 +53,34 @@ class FacebookPageTest extends CrosspostKernelTestBase {
           ['id' => '222', 'name' => 'Page Two', 'access_token' => 'page-token-2', 'tasks' => ['ANALYZE']],
         ],
       ])),
+      new Response(200, [], json_encode([
+        'data' => [
+          ['permission' => 'pages_manage_posts', 'status' => 'granted'],
+          ['permission' => 'business_management', 'status' => 'declined'],
+        ],
+      ])),
+      // A page owned by a business portfolio is not among a person's own
+      // pages; the portfolio is asked for it.
+      new Response(200, [], json_encode(['data' => [['id' => 'b1', 'name' => 'The Business']]])),
+      new Response(200, [], json_encode([
+        'data' => [
+          ['id' => '333', 'name' => 'Portfolio Page', 'access_token' => 'page-token-3', 'tasks' => ['CREATE_CONTENT']],
+          ['id' => '111', 'name' => 'Page One', 'access_token' => 'page-token-1', 'tasks' => ['CREATE_CONTENT']],
+        ],
+      ])),
+      new Response(400, [], json_encode(['error' => ['message' => '(#100) Missing Permission', 'code' => 100]])),
     );
     $approval = $adapter->approval('the-code', ['app_id' => '123', 'app_secret' => 'shh'], 'https://cms.example.com/cb');
     $this->assertSame('Test Person', $approval->person);
-    $this->assertCount(2, $approval->accounts);
+    $this->assertCount(3, $approval->accounts, 'The portfolio page is added once; the one already listed is not repeated.');
     $this->assertSame('111', $approval->accounts[0]->id);
     $this->assertSame(['page_token' => 'page-token-1'], $approval->accounts[0]->tokens);
     $this->assertTrue($approval->accounts[0]->connectable);
     $this->assertFalse($approval->accounts[1]->connectable);
+    $this->assertSame('Portfolio Page', $approval->accounts[2]->label);
+    $this->assertSame(['pages_manage_posts'], $approval->granted);
+    $this->assertSame('/v25.0/b1/owned_pages', $this->requests[6]['request']->getUri()->getPath());
+    $this->assertSame('/v25.0/b1/client_pages', $this->requests[7]['request']->getUri()->getPath());
 
     parse_str($this->requests[0]['request']->getUri()->getQuery(), $first);
     $this->assertSame([
